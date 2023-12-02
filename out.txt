@@ -1,0 +1,18 @@
+Run options: --seed 3035
+
+# Running:
+
+E.
+
+Finished in 0.000290s, 6896.5324 runs/s, 3448.2662 assertions/s.
+
+  1) Error:
+Day1Test#test_part_2_real:
+NoMethodError: undefined method `find_digit' for PartTwo:Class
+    day_1.rb:59:in `find_first_digit'
+    day_1.rb:49:in `block in call'
+    day_1.rb:46:in `each_line'
+    day_1.rb:46:in `call'
+    day_1.rb:182:in `test_part_2_real'
+
+2 runs, 1 assertions, 0 failures, 1 errors, 0 skips
