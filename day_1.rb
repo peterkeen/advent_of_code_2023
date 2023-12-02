@@ -101,11 +101,6 @@ end
 
 
 class Day1Test < Minitest::Test
-  def test_it_works
-    assert true
-  end
-
-
   def test_part_1_example
     example = <<-HERE
       1abc2

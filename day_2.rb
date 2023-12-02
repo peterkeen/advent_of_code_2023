@@ -101,10 +101,6 @@ class GamePower < Service
 end
 
 class Day2Test < Minitest::Test
-  def test_it_works
-    assert true
-  end
-
   def test_part_1_example
     assert_equal(8, GameSet.call(input: EXAMPLE, test_game: EXAMPLE_GAME))
   end
