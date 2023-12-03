@@ -2,7 +2,7 @@ require 'minitest/autorun'
 require 'sorbet-runtime'
 require 'active_model'
 
-SHOULD_LOG = false
+SHOULD_LOG = ENV.fetch('SHOULD_LOG', "false") == "true"
 
 module Log
   extend T::Helpers
@@ -51,6 +51,10 @@ class Value < T::InexactStruct
     serialize == other.serialize
   end
   alias_method :eql?, :==
+
+  def hash
+    serialize.hash
+  end
 end
 
 class Service < Value
