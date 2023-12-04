@@ -14,10 +14,6 @@ module Day3
         errors.add(:y, "negative y!")
       end
     end
-
-    def hash
-      @hash ||= [x,y].hash
-    end
   end
 
   class Part < Value
@@ -35,86 +31,79 @@ module Day3
     const :points, T::Set[Point]
   end
 
-  class Schematic < Value
+  class Schematic < Grid
     const :parts, T::Array[Part], default: []
     const :part_numbers, T::Array[PartNumber], default: []
-    const :width, Integer
-    const :height, Integer
 
-    def self.parse(input)
-      lines = input.split(/\n/)
-      width = lines[0].length
-      height = lines.length
+    prop :digit_buffer, T::Array[String], default: []
+    prop :digit_buffer_start_index, T.nilable(Integer)
 
-      obj = new(width: width, height: height)
+    def clear_digit_buffer
+      self.digit_buffer = []
+      self.digit_buffer_start_index = nil
+    end
 
-      lines.each_with_index do |line, line_index|
-        line = line.strip
-
-        digit_buffer = []
-        digit_buffer_start_char = nil
-
-        line.split('').each_with_index do |char, char_index|
-          if char =~ /\d/
-            digit_buffer << char
-            digit_buffer_start_char ||= char_index
-          else
-            if digit_buffer.length > 0
-              points = (0..digit_buffer.length - 1).map do |i| 
-                Point.new(x: digit_buffer_start_char + i, y: line_index)
-              end
-
-              part_number = PartNumber.new(
-                number: digit_buffer.join('').to_i,
-                points: Set.new(points)
-              )
- 
-              obj.part_numbers << part_number
-
-#              log(op: :new_part_number, part_number: part_number.serialize)
-              digit_buffer = []
-              digit_buffer_start_char = nil
-            end
-            
-            if char != '.'
-              points = Set.new({})
-  
-#              log(op: :detected_part, x: char_index, y: line_index, char: char)
-  
-              [-1, 0, 1].each do |x_offset|
-                [-1, 0, 1].each do |y_offset|
-                  next if line_index + y_offset >= height
-                  next if char_index + x_offset >= width
-                  
-                  points.add(Point.new(x: char_index + x_offset, y: line_index + y_offset))
-                rescue ActiveModel::ValidationError
-                  # pass
-                end
-              end
-              part = Part.new(
-                symbol: char,
-                points: points
-              )
-
-              obj.parts << part
-
-#             log(op: :new_part, part: part.serialize)
-            end
-          end
-        end
-        if digit_buffer.length > 0
+    def handle_char(char, x, y)
+      if char =~ /\d/
+        self.digit_buffer << char
+        self.digit_buffer_start_index ||= x
+      else
+        if self.digit_buffer.length > 0
           points = (0..digit_buffer.length - 1).map do |i| 
-            Point.new(x: digit_buffer_start_char + i, y: line_index)
+            Point.new(x: digit_buffer_start_index + i, y: y)
           end
+
           part_number = PartNumber.new(
             number: digit_buffer.join('').to_i,
             points: Set.new(points)
           )
-          obj.part_numbers << part_number
+ 
+          self.part_numbers << part_number
+
+#          log(op: :new_part_number, part_number: part_number.serialize)
+          clear_digit_buffer
         end
+        
+        if char != '.'
+          points = Set.new({})
+  
+#          log(op: :detected_part, x: char_index, y: line_index, char: char)
+  
+          [-1, 0, 1].each do |x_offset|
+            [-1, 0, 1].each do |y_offset|
+              next if y + y_offset >= height
+              next if x + x_offset >= width
+              
+              points.add(Point.new(x: x + x_offset, y: y + y_offset))
+            rescue ActiveModel::ValidationError
+              # pass
+            end
+          end
+          part = Part.new(
+            symbol: char,
+            points: points
+          )
+
+          self.parts << part
+
+#         log(op: :new_part, part: part.serialize)
+        end
+      end      
+    end
+
+    def after_each_line(line_index)
+      if digit_buffer.length > 0
+        points = (0..digit_buffer.length - 1).map do |i| 
+          Point.new(x: digit_buffer_start_index + i, y: line_index)
+        end
+        part_number = PartNumber.new(
+          number: digit_buffer.join('').to_i,
+          points: Set.new(points)
+        )
+        self.part_numbers << part_number
       end
 
-      obj
+      clear_digit_buffer
     end
 
     def sum!
