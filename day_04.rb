@@ -1,8 +1,7 @@
 require_relative './common'
 
-module Day4
-  EXAMPLE = File.read(File.expand_path("./data/day_4_example.txt"))
-  INPUT = File.read(File.expand_path("./data/day_4_input.txt"))
+module Day04
+  EXAMPLE, INPUT = read_data('04')
 
   class Scratchcard < GameLine
     const :winning_numbers, T::Set[Integer], factory: ->{ Set.new({}) }

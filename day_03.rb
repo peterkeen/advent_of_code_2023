@@ -1,6 +1,8 @@
 require_relative './common'
 
 module Day3
+  EXAMPLE, INPUT = read_data('03')
+  
   class Point < Value
     const :x, Integer
     const :y, Integer
@@ -138,9 +140,6 @@ module Day3
   end
 
   class TestPart1 < Minitest::Test
-    EXAMPLE = File.read(File.expand_path("./data/day_3_example.txt"))
-    INPUT = File.read(File.expand_path("./data/day_3_input.txt"))
-
     def test_example
       assert_equal(4361, Schematic.parse(EXAMPLE).sum!)
     end
@@ -151,9 +150,6 @@ module Day3
   end
 
   class TestPart2 < Minitest::Test
-    EXAMPLE = File.read(File.expand_path("./data/day_3_example.txt"))
-    INPUT = File.read(File.expand_path("./data/day_3_input.txt"))
-
     def test_example
       assert_equal(467835, Schematic.parse(EXAMPLE).gear_ratio!)
     end

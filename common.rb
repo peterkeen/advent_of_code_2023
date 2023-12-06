@@ -137,3 +137,9 @@ class LineGame < Value
     end
   end
 end
+
+def read_data(day)
+  %w[example input].map do |f|
+    File.read(File.expand_path("./data/day_#{day}_#{f}.txt"))
+  end
+end
